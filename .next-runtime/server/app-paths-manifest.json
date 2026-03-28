@@ -1,6 +1,8 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/search/stream/route": "app/api/search/stream/route.js",
   "/signal-stream/page": "app/signal-stream/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/discovery-report/page": "app/discovery-report/page.js",
+  "/api/search/route": "app/api/search/route.js",
+  "/booking-hud/page": "app/booking-hud/page.js",
+  "/api/booking-session/route": "app/api/booking-session/route.js"
 }
