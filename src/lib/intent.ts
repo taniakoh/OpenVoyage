@@ -75,7 +75,7 @@ let client: OpenAI | null = null;
 
 function getOpenAIClient() {
   if (!process.env.OPENAI_API_KEY) {
-    throw new Error("Missing OPENAI_API_KEY.");
+    return null;
   }
 
   client ??= new OpenAI({
@@ -94,7 +94,13 @@ export function getPlanModel() {
 }
 
 export async function parseIntent(prompt: string): Promise<ParsedIntent> {
-  const response = await getOpenAIClient().responses.parse({
+  const openai = getOpenAIClient();
+
+  if (!openai) {
+    return parseIntentFallback(prompt);
+  }
+
+  const response = await openai.responses.parse({
     model: INTENT_MODEL,
     input: [
       {
@@ -128,7 +134,13 @@ export async function createExecutionPlan(
   intent: ParsedIntent,
   scouts: PlanningScoutInput[]
 ): Promise<ExecutionPlan> {
-  const response = await getOpenAIClient().responses.parse({
+  const openai = getOpenAIClient();
+
+  if (!openai) {
+    return createExecutionPlanFallback(prompt, intent, scouts);
+  }
+
+  const response = await openai.responses.parse({
     model: PLAN_MODEL,
     input: [
       {
@@ -181,5 +193,75 @@ export async function createExecutionPlan(
         purpose: matchingScout?.purpose ?? step.purpose
       };
     })
+  };
+}
+
+function parseIntentFallback(prompt: string): ParsedIntent {
+  const lowerPrompt = prompt.toLowerCase();
+  const inferredOrigin = /\bfrom\s+([a-z\s]+?)(?:\s+to|\s+for|\s+via|,|\.|$)/i.exec(prompt)?.[1]?.trim();
+  const inferredDestination = /\bto\s+([a-z\s]+?)(?:\s+via|\s+from|\s+on|\s+for|,|\.|$)/i.exec(prompt)?.[1]?.trim();
+  const preferred_modes = ["ferry", "train", "flight", "bus"].filter((mode) => lowerPrompt.includes(mode));
+  const constraints = [
+    "quiet",
+    "affordable",
+    "cheap",
+    "budget",
+    "morning",
+    "scenic",
+    "family-friendly",
+    "avoid crowds",
+    "fast"
+  ].filter((constraint) => lowerPrompt.includes(constraint));
+  const verification_sources = ["reddit", "x", "local news", "operator site", "forums"].filter((source) =>
+    lowerPrompt.includes(source)
+  );
+  const destination = inferredDestination || (lowerPrompt.includes("batam") ? "Batam" : "Batam Centre");
+  const origin = inferredOrigin || (lowerPrompt.includes("singapore") ? "Singapore" : "Singapore");
+
+  return {
+    origin,
+    destination,
+    constraints: constraints.length ? constraints : ["quiet", "affordable"],
+    preferred_modes: preferred_modes.length ? preferred_modes : ["ferry"],
+    verification_sources: verification_sources.length ? verification_sources : ["reddit", "operator site"],
+    scout_queries: [
+      `${origin} ${destination} best route`,
+      `${destination} delays today`,
+      `${destination} crowd conditions`
+    ],
+    modes: preferred_modes.length ? preferred_modes : ["ferry"]
+  };
+}
+
+function createExecutionPlanFallback(
+  prompt: string,
+  intent: ParsedIntent,
+  scouts: PlanningScoutInput[]
+): ExecutionPlan {
+  return {
+    tripSummary: `Scout the best ${intent.preferred_modes[0] || "travel"} lane from ${intent.origin} to ${intent.destination}.`,
+    planningNote: `Fallback planner generated from the prompt: ${prompt}`,
+    laneStrategy: "Run transport scouts in parallel, then validate with community signals before recommending a route.",
+    rankingCriteria: [
+      "Prioritize quieter departure windows",
+      "Keep fares affordable",
+      "Prefer routes with matching social verification"
+    ],
+    verificationStrategy: [
+      "Compare operator results with social chatter",
+      "Flag disruption keywords before booking handoff"
+    ],
+    fallbackStrategy: "If the lead route looks noisy or delayed, keep the strongest secondary lane ready for handoff.",
+    steps: scouts.map((scout) => ({
+      id: scout.id,
+      title: scout.title,
+      lane: scout.lane,
+      site: scout.url,
+      purpose: scout.purpose,
+      successSignal:
+        scout.lane === "social"
+          ? "Recent community chatter is categorized into a clear, delayed, or risky signal."
+          : "A structured route, price, and departure window are returned."
+    }))
   };
 }

@@ -1,8 +1,12 @@
-import { BookingHudExperience } from "@/components/booking-hud-experience";
-import { loadBookingHudPayload } from "@/lib/booking-hud";
+import { BookingHudClient } from "@/components/booking-hud-client";
+import { defaultGatewayPrompt } from "@/lib/open-voyage-data";
 
-export default async function BookingHudPage() {
-  const payload = await loadBookingHudPayload();
+type BookingHudPageProps = {
+  searchParams?: {
+    prompt?: string;
+  };
+};
 
-  return <BookingHudExperience payload={payload} />;
+export default function BookingHudPage({ searchParams }: BookingHudPageProps) {
+  return <BookingHudClient prompt={searchParams?.prompt || defaultGatewayPrompt} />;
 }

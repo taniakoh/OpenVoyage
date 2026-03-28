@@ -139,6 +139,11 @@ function createMockScoutResult(scout: ScoutDefinition, intent: ParsedIntent): Sc
   };
 }
 
+function getScoutTimeoutMs() {
+  const parsed = Number(process.env.OPENVOYAGE_SCOUT_TIMEOUT_MS);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 20_000;
+}
+
 export async function executeScout(
   scout: ScoutDefinition,
   intent: ParsedIntent,
@@ -156,31 +161,64 @@ export async function executeScout(
     return mockResult;
   }
 
-  const run: TinyFishRunResult = await runTinyFishAutomation(
-    {
-      url: scout.url,
-      goal: scout.goal
-    },
-    {
-      signal: options?.signal,
-      onEvent(event) {
-        options?.onEvent?.(toScoutProgressEvent(scout, event));
-      }
-    }
-  );
+  const timeoutController = new AbortController();
+  const parentAbortHandler = () => timeoutController.abort(options?.signal?.reason);
+  options?.signal?.addEventListener("abort", parentAbortHandler, { once: true });
 
-  const payload = getTinyFishResultPayload(run.finalEvent);
+  try {
+    const run: TinyFishRunResult = await Promise.race([
+      runTinyFishAutomation(
+        {
+          url: scout.url,
+          goal: scout.goal
+        },
+        {
+          signal: timeoutController.signal,
+          onEvent(event) {
+            options?.onEvent?.(toScoutProgressEvent(scout, event));
+          }
+        }
+      ),
+      new Promise<TinyFishRunResult>((_, reject) => {
+        const timeoutId = setTimeout(() => {
+          timeoutController.abort();
+          reject(new Error(`Scout timed out after ${getScoutTimeoutMs()}ms.`));
+        }, getScoutTimeoutMs());
 
-  return {
-    scout,
-    status: run.finalEvent.status === "COMPLETED" ? "completed" : "failed",
-    resultJson: payload,
-    summary:
-      typeof payload === "object" && payload !== null
-        ? "Structured scout payload received."
-        : "Scout completed without a structured object payload.",
-    rawEvents: run.events
-  };
+        timeoutController.signal.addEventListener(
+          "abort",
+          () => {
+            clearTimeout(timeoutId);
+          },
+          { once: true }
+        );
+      })
+    ]);
+
+    const payload = getTinyFishResultPayload(run.finalEvent);
+
+    return {
+      scout,
+      status: run.finalEvent.status === "COMPLETED" ? "completed" : "failed",
+      resultJson: payload,
+      summary:
+        typeof payload === "object" && payload !== null
+          ? "Structured scout payload received."
+          : "Scout completed without a structured object payload.",
+      rawEvents: run.events
+    };
+  } catch (error) {
+    const mockResult = createMockScoutResult(scout, intent);
+    return {
+      ...mockResult,
+      summary:
+        error instanceof Error
+          ? `${mockResult.summary} TinyFish fallback used: ${error.message}`
+          : `${mockResult.summary} TinyFish fallback used.`
+    };
+  } finally {
+    options?.signal?.removeEventListener("abort", parentAbortHandler);
+  }
 }
 
 function toScoutProgressEvent(

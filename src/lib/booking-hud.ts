@@ -1,3 +1,4 @@
+import { getSearchSnapshot } from "@/lib/search";
 import { createClient } from "@/utils/supabase/server";
 
 export type BookingTravelerProfile = {
@@ -24,6 +25,12 @@ export type BookingHudPayload = {
     departureWindow: string;
     fareHold: string;
     operator: string;
+    bookingUrl: string;
+  };
+  portal: {
+    targetUrl: string;
+    websocketUrl: string;
+    viewportLabel: string;
   };
   liveSteps: readonly {
     title: string;
@@ -34,35 +41,52 @@ export type BookingHudPayload = {
   mfaHint: string;
 };
 
+const defaultPrompt =
+  "Find me the quietest Batam ferry from Singapore tomorrow morning, keep it affordable, and verify checkpoint conditions with Reddit and local news.";
+
 const fallbackTraveler: BookingTravelerProfile = {
   fullName: "Avery Tan",
   email: "avery.tan@openvoyage.dev",
   phone: "+65 8123 5521",
   nationality: "Singapore",
   passportNumber: "E1234567M",
-  emergencyContact: "Kai Tan • +65 9001 4409"
+  emergencyContact: "Kai Tan | +65 9001 4409"
 };
 
-export async function loadBookingHudPayload(): Promise<BookingHudPayload> {
+export async function loadBookingHudPayload(prompt = defaultPrompt): Promise<BookingHudPayload> {
   const traveler = await loadTravelerProfile();
+  const searchSnapshot = await loadSearchSnapshot(prompt);
+  const bestRoute = readObject(searchSnapshot?.summary.bestRoute);
+  const intent = searchSnapshot?.intent;
+  const operator = readOperator(bestRoute) || "BatamFast Ferry";
+  const destination = readString(bestRoute?.headline) || `${intent?.destination || "Batam"} Route`;
+  const departureWindow = readString(bestRoute?.departure) || "2026-03-29 06:40 SGT";
+  const fareHold = readString(bestRoute?.price) || "SGD 38.00";
+  const bookingUrl = readString(bestRoute?.booking_url) || "https://www.batamfast.com";
 
   return {
     traveler,
     route: {
-      destination: "Batam Centre Terminal",
-      departureWindow: "2026-03-29 06:40 SGT",
-      fareHold: "SGD 38.00",
-      operator: "BatamFast Ferry"
+      destination,
+      departureWindow,
+      fareHold,
+      operator,
+      bookingUrl
+    },
+    portal: {
+      targetUrl: bookingUrl,
+      websocketUrl: buildPortalSocketUrl(bookingUrl),
+      viewportLabel: buildViewportLabel(bookingUrl)
     },
     liveSteps: [
       {
         title: "Portal staged",
-        detail: "Shadow browser session reserved and waiting for traveler approval.",
+        detail: `Shadow browser session reserved for ${operator} and waiting for traveler approval at ${readHostLabel(bookingUrl)}.`,
         status: "complete"
       },
       {
         title: "Form injection lane",
-        detail: "Profile data is mapped to the booking fields but pauses on sensitive verification screens.",
+        detail: "Traveler profile data is mapped to checkout selectors and pauses on sensitive verification screens.",
         status: "active"
       },
       {
@@ -110,6 +134,14 @@ export async function loadBookingHudPayload(): Promise<BookingHudPayload> {
     ],
     mfaHint: "Code expected from the ferry operator checkout challenge."
   };
+}
+
+async function loadSearchSnapshot(prompt: string) {
+  try {
+    return await getSearchSnapshot(prompt);
+  } catch {
+    return null;
+  }
 }
 
 async function loadTravelerProfile(): Promise<BookingTravelerProfile> {
@@ -172,4 +204,62 @@ function readProfileValue(record: Record<string, unknown> | null, keys: string[]
   }
 
   return "";
+}
+
+function readObject(value: unknown) {
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : null;
+}
+
+function readString(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function readOperator(route: Record<string, unknown> | null) {
+  const bookingUrl = readString(route?.booking_url);
+
+  if (bookingUrl.includes("batamfast")) {
+    return "BatamFast Ferry";
+  }
+
+  if (bookingUrl.includes("directferries")) {
+    return "Direct Ferries";
+  }
+
+  if (bookingUrl.includes("ktmb")) {
+    return "KTM Shuttle";
+  }
+
+  if (bookingUrl.includes("google.com/travel/flights")) {
+    return "Google Flights";
+  }
+
+  return "";
+}
+
+function readHostLabel(url: string) {
+  try {
+    return new URL(url).host.replace(/^www\./, "");
+  } catch {
+    return "booking operator";
+  }
+}
+
+function buildPortalSocketUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    const protocol = parsed.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//shadow.openvoyage.local/session?target=${encodeURIComponent(parsed.toString())}`;
+  } catch {
+    return "wss://shadow.openvoyage.local/session";
+  }
+}
+
+function buildViewportLabel(url: string) {
+  try {
+    const parsed = new URL(url);
+    const path = parsed.pathname === "/" ? "" : parsed.pathname;
+    return `${parsed.host.replace(/^www\./, "")}${path}`;
+  } catch {
+    return "checkout";
+  }
 }

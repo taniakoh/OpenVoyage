@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { BottomHud, GlassPanel, ScenicBackdrop, TopBar } from "@/components/cinematic-ui";
-import type { LiveSentrySnapshot, LiveSentryTimelineEvent } from "@/lib/live-sentry";
+import { buildLiveSentrySnapshot, type LiveSentrySnapshot, type LiveSentryTimelineEvent } from "@/lib/live-sentry";
 
 const REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 
 type MissionControlClientProps = {
-  initialSnapshot: LiveSentrySnapshot;
+  initialSnapshot?: LiveSentrySnapshot;
 };
 
 function formatTimestamp(value: string) {
@@ -38,9 +38,10 @@ function eventDotClass(status: LiveSentryTimelineEvent["status"]) {
 }
 
 export function MissionControlClient({ initialSnapshot }: MissionControlClientProps) {
-  const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [snapshot, setSnapshot] = useState(initialSnapshot ?? buildLiveSentrySnapshot("stable"));
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(Boolean(initialSnapshot));
 
   useEffect(() => {
     let isMounted = true;
@@ -64,6 +65,7 @@ export function MissionControlClient({ initialSnapshot }: MissionControlClientPr
 
         setSnapshot(nextSnapshot);
         setError(null);
+        setHasLoaded(true);
       } catch (caughtError) {
         if (!isMounted) {
           return;
@@ -77,6 +79,7 @@ export function MissionControlClient({ initialSnapshot }: MissionControlClientPr
       }
     };
 
+    void loadSnapshot();
     const intervalId = window.setInterval(loadSnapshot, REFRESH_INTERVAL_MS);
 
     return () => {
@@ -125,6 +128,7 @@ export function MissionControlClient({ initialSnapshot }: MissionControlClientPr
                 <span className="italic text-white/70">Sentry</span>
               </h1>
               <p className="mt-5 text-sm leading-relaxed text-slate-300">{snapshot.summary}</p>
+              {!hasLoaded ? <p className="mt-3 text-xs uppercase tracking-[0.22em] text-cyan-300/70">Fetching live sentry snapshot...</p> : null}
             </div>
 
             <div

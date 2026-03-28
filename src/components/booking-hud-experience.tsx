@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { BottomHud, GlassPanel, ScenicBackdrop, TopBar } from "@/components/cinematic-ui";
-import { type BookingHudPayload } from "@/lib/booking-hud";
+import { type BookingFieldMapping, type BookingHudPayload } from "@/lib/booking-hud";
 
 type SessionLog = {
   type: string;
@@ -17,25 +17,29 @@ type SessionLog = {
 
 type SessionState = "idle" | "running" | "mfa" | "payment-ready" | "confirmed";
 
-export function BookingHudExperience({ payload }: { payload: BookingHudPayload }) {
+export function BookingHudExperience({ payload, prompt }: { payload: BookingHudPayload; prompt?: string }) {
   const [sessionState, setSessionState] = useState<SessionState>("idle");
   const [portalOpen, setPortalOpen] = useState(false);
   const [mfaOpen, setMfaOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [progress, setProgress] = useState(12);
-  const [portalUrl, setPortalUrl] = useState<string | null>(null);
+  const [portalUrl, setPortalUrl] = useState<string>(payload.portal.websocketUrl);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [logs, setLogs] = useState<SessionLog[]>([
     {
       type: "BOOT",
       message: "Execution portal staged. Waiting for the traveler to initialize the booking lane.",
-      progress: 12
+      progress: 12,
+      portalUrl: payload.portal.websocketUrl
     }
   ]);
   const [mfaCode, setMfaCode] = useState(["", "", "", "", "", ""]);
 
   const allDigitsFilled = mfaCode.every((digit) => digit.length === 1);
   const currentSignal = `${Math.max(progress, confirmed ? 100 : progress).toFixed(1)}%`;
+  const readyMappings = payload.fieldMappings.filter((field) => field.status === "ready");
+  const pendingMappings = payload.fieldMappings.filter((field) => field.status === "pending");
 
   const liveBadge = useMemo(() => {
     if (confirmed) {
@@ -65,7 +69,9 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
 
     setSessionState("running");
     setPortalOpen(true);
+    setSessionError(null);
     setLogs((current) => current.slice(0, 1));
+    setProgress(18);
 
     const response = await fetch("/api/booking-session", {
       method: "POST",
@@ -73,22 +79,28 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+        prompt,
         destination: payload.route.destination,
         operator: payload.route.operator,
         travelerName: payload.traveler.fullName,
-        fieldCount: payload.fieldMappings.length
+        bookingUrl: payload.route.bookingUrl,
+        websocketUrl: payload.portal.websocketUrl,
+        viewportLabel: payload.portal.viewportLabel,
+        fieldMappings: payload.fieldMappings
       })
     });
 
     if (!response.ok || !response.body) {
+      const message = "Unable to open the shadow browser stream from the booking session route.";
       setLogs((current) => [
         ...current,
         {
           type: "ERROR",
-          message: "Unable to open the shadow browser stream from the booking session route.",
+          message,
           progress
         }
       ]);
+      setSessionError(message);
       setSessionState("idle");
       return;
     }
@@ -129,6 +141,11 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
         if (event.type === "PAYMENT_READY" || event.type === "COMPLETE") {
           setSessionState("payment-ready");
         }
+
+        if (event.type === "ERROR") {
+          setSessionError(event.message);
+          setSessionState("idle");
+        }
       }
     }
   }
@@ -136,24 +153,50 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
   async function confirmPayment() {
     if (!allDigitsFilled) {
       setMfaOpen(true);
+      setSessionError("Enter the full 6-digit verification code before releasing payment.");
       return;
     }
 
     setConfirming(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setConfirming(false);
-    setConfirmed(true);
-    setMfaOpen(false);
-    setSessionState("confirmed");
-    setProgress(100);
-    setLogs((current) => [
-      ...current,
-      {
-        type: "FINAL_CLICK",
-        message: `Final payment hand-off released with code ${mfaCode.join("")}. Agent click authorized by traveler.`,
-        progress: 100
+    setSessionError(null);
+
+    try {
+      const response = await fetch("/api/booking-session", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "confirm_payment",
+          verificationCode: mfaCode.join(""),
+          operator: payload.route.operator,
+          destination: payload.route.destination
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("The server did not accept the payment release.");
       }
-    ]);
+
+      const result = (await response.json()) as { maskedCode: string };
+      setConfirming(false);
+      setConfirmed(true);
+      setMfaOpen(false);
+      setSessionState("confirmed");
+      setProgress(100);
+      setLogs((current) => [
+        ...current,
+        {
+          type: "FINAL_CLICK",
+          message: `Final payment hand-off released with verification token ${result.maskedCode}. Agent click authorized by traveler.`,
+          progress: 100
+        }
+      ]);
+    } catch (error) {
+      setConfirming(false);
+      setSessionError(error instanceof Error ? error.message : "Confirm payment failed.");
+      setMfaOpen(true);
+    }
   }
 
   return (
@@ -172,7 +215,7 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
                   </div>
                   <h1 className="mt-3 font-headline text-5xl font-light text-white">Booking HUD</h1>
                   <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
-                    OpenVoyage is filling the operator checkout for you, showing the live session state, and stopping only when the site requires your verification.
+                    OpenVoyage fills the operator checkout for you, shows the live session state, and stops only when the site requires your verification.
                   </p>
                 </div>
                 <div className="glass-chip rounded-full px-4 py-2 text-[9px] uppercase tracking-[0.28em] text-[#ffd1c4]">
@@ -207,6 +250,11 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
                     <ProfileTile label="Phone" value={payload.traveler.phone} />
                     <ProfileTile label="Passport" value={payload.traveler.passportNumber} />
                   </div>
+
+                  <div className="mt-6 rounded-[1.35rem] border border-cyan-300/10 bg-cyan-300/5 p-4">
+                    <div className="text-[9px] uppercase tracking-[0.24em] text-cyan-300/80">Checkout target</div>
+                    <div className="mt-2 break-all font-mono text-xs text-slate-200">{payload.route.bookingUrl}</div>
+                  </div>
                 </div>
 
                 <div className="rounded-[1.75rem] border border-white/10 bg-[#07111f]/70 p-5">
@@ -235,6 +283,24 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
                 </div>
               </div>
             </GlassPanel>
+
+            <GlassPanel className="p-7">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[9px] uppercase tracking-[0.32em] text-cyan-300/70">Form Injection</div>
+                  <h2 className="mt-3 font-headline text-3xl text-white">Profile Mapping Lane</h2>
+                </div>
+                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[9px] uppercase tracking-[0.24em] text-slate-300">
+                  {readyMappings.length} ready / {pendingMappings.length} pending
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-3">
+                {payload.fieldMappings.map((field) => (
+                  <FieldMappingCard key={field.label} mapping={field} />
+                ))}
+              </div>
+            </GlassPanel>
           </div>
 
           <div className="grid gap-6">
@@ -250,15 +316,15 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
               </div>
 
               <div className="mt-6 rounded-[1.8rem] border border-cyan-300/12 bg-[#040913]/85 p-4 shadow-[inset_0_0_0_1px_rgba(0,229,255,0.08)]">
-                <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.24em] text-slate-500">
+                <div className="flex items-center justify-between gap-3 text-[9px] uppercase tracking-[0.24em] text-slate-500">
                   <span>VNC / Websocket viewport</span>
-                  <span>{portalUrl ?? "Pending portal URL"}</span>
+                  <span>{portalUrl}</span>
                 </div>
 
                 <div className="booking-portal-grid mt-4 h-[268px] rounded-[1.4rem] border border-white/6 bg-[radial-gradient(circle_at_top,rgba(0,229,255,0.08),transparent_42%),linear-gradient(180deg,rgba(8,14,26,0.98),rgba(4,9,19,0.96))] p-4">
                   <div className="booking-portal-window rounded-[1.1rem] border border-cyan-300/10 bg-white/[0.03] p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[11px] text-cyan-200">batamfast.com/checkout</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-mono text-[11px] text-cyan-200">{payload.portal.viewportLabel}</span>
                       <span className="rounded-full bg-cyan-300/10 px-2 py-1 text-[9px] uppercase tracking-[0.2em] text-cyan-300">
                         Live
                       </span>
@@ -291,6 +357,14 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
                   Expand
                 </button>
               </div>
+
+              <Link
+                className="ghost-button mt-4 block rounded-full px-5 py-4 text-center text-[10px] uppercase tracking-[0.3em] text-cyan-300"
+                href={payload.route.bookingUrl}
+                target="_blank"
+              >
+                Open operator checkout
+              </Link>
             </GlassPanel>
 
             <GlassPanel className="p-7">
@@ -319,9 +393,12 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
                       <span className="text-slate-500">{log.progress}%</span>
                     </div>
                     <p className="mt-2 leading-relaxed text-slate-300">{log.message}</p>
+                    {log.selector ? <div className="mt-2 text-[10px] text-slate-500">{log.selector}</div> : null}
                   </div>
                 ))}
               </div>
+
+              {sessionError ? <p className="mt-5 text-sm text-rose-200">{sessionError}</p> : null}
 
               <Link
                 className="ghost-button mt-6 block rounded-full px-5 py-4 text-center text-[10px] uppercase tracking-[0.3em] text-cyan-300"
@@ -354,9 +431,11 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
           confirmed={confirmed}
           logs={logs}
           onClose={() => setPortalOpen(false)}
+          portalTarget={payload.route.bookingUrl}
           portalUrl={portalUrl}
           progress={progress}
           state={sessionState}
+          viewportLabel={payload.portal.viewportLabel}
         />
       ) : null}
 
@@ -367,7 +446,7 @@ export function BookingHudExperience({ payload }: { payload: BookingHudPayload }
           onChange={(index, value) => {
             setMfaCode((current) => {
               const next = [...current];
-              next[index] = value.slice(0, 1);
+              next[index] = value.replace(/\D/g, "").slice(0, 1);
               return next;
             });
           }}
@@ -411,6 +490,34 @@ function ProfileTile({ label, value }: { label: string; value: string }) {
   );
 }
 
+function FieldMappingCard({ mapping }: { mapping: BookingFieldMapping }) {
+  const chipClass =
+    mapping.status === "ready"
+      ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
+      : "border-[#ffb4a3]/20 bg-[#ffb4a3]/10 text-[#ffe3dc]";
+
+  return (
+    <div className="rounded-[1.35rem] border border-white/8 bg-white/[0.03] p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-sm font-medium text-white">{mapping.label}</div>
+          <div className="mt-2 font-mono text-[11px] text-cyan-200">{mapping.selector}</div>
+        </div>
+        <span className={`rounded-full border px-3 py-1 text-[9px] uppercase tracking-[0.2em] ${chipClass}`}>
+          {mapping.status}
+        </span>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+        <div>
+          <div className="text-[9px] uppercase tracking-[0.22em] text-slate-500">Resolved value</div>
+          <div className="mt-2 break-all text-sm text-slate-200">{mapping.value || "No value resolved yet"}</div>
+        </div>
+        <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{mapping.source}</div>
+      </div>
+    </div>
+  );
+}
+
 function PortalField({
   label,
   value,
@@ -432,16 +539,20 @@ function PortalModal({
   logs,
   onClose,
   portalUrl,
+  portalTarget,
   progress,
   state,
-  confirmed
+  confirmed,
+  viewportLabel
 }: {
   logs: SessionLog[];
   onClose: () => void;
-  portalUrl: string | null;
+  portalUrl: string;
+  portalTarget: string;
   progress: number;
   state: SessionState;
   confirmed: boolean;
+  viewportLabel: string;
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020611]/82 px-4 backdrop-blur-xl">
@@ -459,14 +570,15 @@ function PortalModal({
             <div className="text-[9px] uppercase tracking-[0.32em] text-cyan-300/70">Shadow Browser Portal</div>
             <h2 className="mt-3 font-headline text-4xl text-white">Live Remote Session</h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300">
-              This modal is the phase 5 portal surface for the TinyFish session. It can display a future live VNC or websocket target while already showing the autonomous progress and traveler stop points.
+              This portal is now wired to the booking-session stream and displays the live target, session progress, and traveler stop points for the final payment release.
             </p>
 
             <div className="mt-6 rounded-[1.8rem] border border-cyan-300/12 bg-[#04101d] p-5">
               <div className="flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.24em] text-slate-500">
                 <span>Remote target</span>
-                <span className="font-mono text-cyan-300">{portalUrl ?? "Awaiting session endpoint"}</span>
+                <span className="font-mono text-cyan-300">{portalUrl}</span>
               </div>
+              <div className="mt-3 text-[10px] uppercase tracking-[0.2em] text-slate-500">{portalTarget}</div>
               <div className="mt-5 h-[320px] rounded-[1.5rem] border border-white/8 bg-[linear-gradient(180deg,rgba(6,11,22,0.98),rgba(4,9,19,0.94))] p-5">
                 <div className="grid h-full grid-rows-[auto_1fr_auto] gap-4">
                   <div className="flex items-center justify-between">
@@ -479,7 +591,7 @@ function PortalModal({
                     <div className="space-y-4 text-center">
                       <div className="mx-auto h-24 w-24 rounded-full border border-cyan-300/20 bg-cyan-300/10 shadow-[0_0_44px_rgba(0,229,255,0.18)]" />
                       <div className="text-sm text-slate-300">
-                        Agent viewport placeholder for live typing, field focus, and traveler-visible checkout actions.
+                        {viewportLabel} is staged for traveler-visible typing, selector focus, and confirmation gating.
                       </div>
                     </div>
                   </div>
@@ -503,6 +615,7 @@ function PortalModal({
               >
                 <div className="text-[9px] uppercase tracking-[0.24em] text-slate-500">{log.type}</div>
                 <p className="mt-2 text-sm leading-relaxed text-white">{log.message}</p>
+                {log.selector ? <p className="mt-2 font-mono text-[11px] text-cyan-200">{log.selector}</p> : null}
               </div>
             ))}
           </div>
@@ -546,6 +659,7 @@ function MfaModal({
           {code.map((digit, index) => (
             <input
               className="h-14 rounded-[1.2rem] border border-[#ffb4a3]/30 bg-[#180b0c] text-center font-mono text-2xl text-[#fff3ef] outline-none focus:border-[#ffd3c9]"
+              inputMode="numeric"
               key={`${digit}-${index}`}
               maxLength={1}
               onChange={(event) => onChange(index, event.target.value)}

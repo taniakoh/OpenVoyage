@@ -184,10 +184,10 @@ export async function getSearchSnapshot(
             scoutLabel: scout.label,
             lane: scout.lane,
             url: scout.url,
-            status: event.type === "COMPLETE" ? "completed" : "log",
-            rawType: event.type,
-            rawStatus: event.status,
-            message: event.message || `${scout.label} emitted ${event.type}`
+            status: event.eventType === "agent_completed" ? "completed" : "log",
+            rawType: event.agent.rawEventType,
+            rawStatus: event.agent.rawEventStatus,
+            message: event.message || `${scout.label} emitted ${event.eventType}`
           });
         }
       });
