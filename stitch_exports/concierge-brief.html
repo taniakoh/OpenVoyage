@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OpenVoyage | Synthesis</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@200..800&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#ffdad2",
+              "on-secondary": "#621000",
+              "inverse-on-surface": "#2a303f",
+              "on-primary-fixed": "#001f24",
+              "on-error-container": "#ffdad6",
+              "surface-container-low": "#151c29",
+              "on-tertiary-fixed-variant": "#594400",
+              "background": "#0d1321",
+              "tertiary-container": "#fec931",
+              "tertiary": "#ffeac0",
+              "surface-container-lowest": "#070e1b",
+              "surface-container": "#19202d",
+              "inverse-surface": "#dce2f5",
+              "surface-tint": "#00daf3",
+              "on-primary": "#00363d",
+              "on-primary-container": "#00626e",
+              "primary-container": "#00e5ff",
+              "primary-fixed-dim": "#00daf3",
+              "outline-variant": "#3b494c",
+              "on-surface-variant": "#bac9cc",
+              "on-primary-fixed-variant": "#004f58",
+              "surface-container-highest": "#2e3543",
+              "secondary-fixed-dim": "#ffb4a3",
+              "on-surface": "#dce2f5",
+              "on-error": "#690005",
+              "primary": "#c3f5ff",
+              "outline": "#849396",
+              "on-tertiary-fixed": "#251a00",
+              "tertiary-fixed-dim": "#f3bf26",
+              "on-secondary-fixed": "#3d0700",
+              "error": "#ffb4ab",
+              "surface-dim": "#0d1321",
+              "surface-variant": "#2e3543",
+              "surface-bright": "#333948",
+              "error-container": "#93000a",
+              "on-secondary-container": "#ffa089",
+              "on-background": "#dce2f5",
+              "secondary": "#ffb4a3",
+              "surface-container-high": "#232a38",
+              "primary-fixed": "#9cf0ff",
+              "on-tertiary-container": "#6f5500",
+              "inverse-primary": "#006875",
+              "surface": "#0d1321",
+              "secondary-container": "#88270f",
+              "tertiary-fixed": "#ffdf96",
+              "on-tertiary": "#3e2e00",
+              "on-secondary-fixed-variant": "#84240d"
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"],
+              "mono": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .glass-edge { box-shadow: inset 0 0 0 1px rgba(195, 245, 255, 0.15); }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .text-haven-white { color: #F8FAFC; }
+    </style>
+</head>
+<body class="font-body text-on-surface selection:bg-primary-container/30 bg-background overflow-x-hidden">
+<!-- Full-Bleed Background Layer -->
+<div class="fixed inset-0 z-0 overflow-hidden">
+<img class="w-full h-full object-cover opacity-40 mix-blend-lighten scale-105" data-alt="wide cinematic landscape of misty blue mountains at twilight with a soft ethereal celestial glow on the horizon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4k-TNZ_qu_5rJWcMxXJ32VdwhlGmJQRnejmNddTabGJloTsXtCVUhbHHWo9yXJ6QKDsXG3hfu277b1A63PSvYdvF99JrAZogdoUF-_2YyU7KgsETLgjKLYsfUVdp5x_-7Z-xc_NNZBqBM8V9iyqWggojjb9HlRzd_VaMckKbeZJ87TsE06Hymji973tvm57kFoHbRu1D9Y68YILh2GPmBmJoxTh1tcLjPsaVe9Nf5khjSNgaZEUG4q0vhv6opZkFJGAFIe2dymyM"/>
+<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/90"></div>
+</div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-xl flex justify-between items-center px-12 py-6">
+<div class="text-2xl font-serif italic text-haven-white">
+            OpenVoyage
+        </div>
+<nav class="hidden md:flex items-center gap-12 font-headline">
+<a class="text-primary border-b border-primary/40 pb-0.5 tracking-wide" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors tracking-wide" href="#">History</a>
+<a class="text-slate-400 hover:text-white transition-colors tracking-wide" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-primary text-3xl cursor-pointer hover:opacity-80 transition-all">account_circle</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="relative z-10 min-h-screen pt-40 pb-32 px-12 max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<!-- Left Column: Summary (Ground Truth) -->
+<section class="lg:col-span-5 flex flex-col gap-12">
+<div class="space-y-4">
+<span class="font-mono text-primary-container tracking-[0.4em] text-[10px] uppercase opacity-60">Ground Truth Protocol // 082</span>
+<h1 class="font-headline text-6xl xl:text-8xl text-haven-white leading-[1.05] font-light">
+                    The Silent Peak <br/><span class="italic font-light opacity-80">Synthesis</span>
+</h1>
+</div>
+<div class="space-y-10">
+<p class="font-headline text-2xl text-on-surface-variant leading-relaxed font-light">
+                    Our cross-network analysis confirms a rare atmospheric alignment over the <span class="text-primary italic">OpenVoyage Highlands</span>. Local telemetry reveals a "Quiet Pocket" within the northern ridge.
+                </p>
+<div class="p-8 rounded-xl bg-surface-container-low/30 backdrop-blur-[40px] glass-edge relative overflow-hidden group border border-white/5">
+<p class="text-on-surface-variant/90 leading-loose relative z-10 font-light italic">
+                        The consensus indicates that the trail is currently being avoided due to a localized magnetic anomaly, making it a <span class="text-haven-white font-medium underline decoration-primary/40 underline-offset-4">Hidden Gem</span> for those utilizing our inertial guidance.
+                    </p>
+</div>
+</div>
+<!-- Discovery Signal Meter -->
+<div class="flex flex-col gap-6 mt-4">
+<div class="flex justify-between items-end">
+<span class="font-mono text-[9px] uppercase tracking-[0.3em] text-primary/70">Discovery Signal Strength</span>
+<span class="font-mono text-[10px] text-primary-container">LAT: 46.8523° N</span>
+</div>
+<div class="h-[2px] w-full bg-white/10 rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container shadow-[0_0_15px_rgba(0,229,255,0.8)] w-[94%] animate-pulse"></div>
+</div>
+<div class="flex gap-8">
+<div class="flex items-center gap-2 group cursor-default">
+<span class="material-symbols-outlined text-xs text-primary group-hover:scale-110 transition-transform">forum</span>
+<span class="font-mono text-[9px] text-on-surface-variant/60 tracking-widest uppercase">Reddit Sync</span>
+</div>
+<div class="flex items-center gap-2 group cursor-default">
+<span class="material-symbols-outlined text-xs text-primary group-hover:scale-110 transition-transform">satellite_alt</span>
+<span class="font-mono text-[9px] text-on-surface-variant/60 tracking-widest uppercase">Live Telemetry</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Vibe Map Widget -->
+<section class="lg:col-span-7">
+<div class="relative w-full aspect-[4/5] lg:aspect-[1.1/1] rounded-2xl overflow-hidden shadow-[0px_40px_100px_rgba(0,0,0,0.6)] group border border-white/10">
+<!-- Background Image -->
+<img alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105" data-alt="cinematic wide-angle shot of a mist-shrouded turquoise alpine lake at dawn with jagged slate-colored peaks and ethereal teal lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZPYukA_8xIndBaxucr7QwEQT55BlLVA-2Di9ye5sNj_U5r3pyIVNnXqoYLQ3mFFtcAjroKysdmybVShZdhGWDWo6jKTKxAd_SzOhdoxNQkF7xT9hPAwAZbBDEuFtTq3-ix_EpwAdvKK1JKrwxB9sG-Td4406jit5HQUkApA1ZcM-ecFd823GNBHSEuR65an17SmtsU4PN1nQlQRtbcbLjk1LX9uhXcHPF12KiYCuZhT0grccqepAGJWvAikuxYy4wdELih1WikB0"/>
+<!-- Premium Glass Overlays -->
+<div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-black/20"></div>
+<div class="absolute inset-0 p-12 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="p-4 rounded-xl bg-surface-container-lowest/30 backdrop-blur-[30px] glass-edge border border-white/5 flex flex-col gap-1 transition-all hover:bg-surface-container-lowest/40 cursor-default">
+<span class="font-mono text-[9px] text-primary/70 uppercase tracking-widest">Coordinates</span>
+<span class="font-mono text-xs text-haven-white">46.8523° N, 9.6122° E</span>
+</div>
+<div class="flex flex-col gap-3 items-end">
+<div class="px-6 py-2 rounded-full bg-white/5 backdrop-blur-[20px] border border-white/10 text-haven-white font-headline italic tracking-wide text-xs">
+                                Quiet
+                            </div>
+<div class="px-6 py-2 rounded-full bg-primary-container/10 backdrop-blur-[20px] border border-primary-container/20 text-primary-container font-headline italic tracking-wide text-xs">
+                                Hidden Gem
+                            </div>
+</div>
+</div>
+<div class="space-y-8">
+<div class="flex items-center gap-5">
+<div class="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.4)]">
+<span class="material-symbols-outlined text-on-primary-fixed text-2xl">explore</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-4xl text-haven-white leading-tight">The OpenVoyage Basin</span>
+<span class="font-mono text-[10px] text-primary-container/70 tracking-widest uppercase">Real-Time Atmosphere Sync</span>
+</div>
+</div>
+<!-- Radar HUD Glass -->
+<div class="relative h-40 w-full glass-edge rounded-xl bg-slate-950/30 backdrop-blur-[20px] overflow-hidden border border-white/5 group-hover:border-primary/20 transition-colors">
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="absolute top-1/2 left-0 w-full h-px bg-white/5"></div>
+<div class="absolute top-0 left-1/2 h-full w-px bg-white/5"></div>
+<!-- Scanning Line -->
+<div class="absolute top-0 left-1/2 h-full w-1/2 bg-gradient-to-r from-primary/20 to-transparent origin-left animate-[spin_6s_linear_infinite]"></div>
+<!-- Static Icons -->
+<span class="material-symbols-outlined absolute top-1/4 left-1/3 text-primary text-[10px] animate-pulse" style="font-variation-settings: 'FILL' 1;">radio_button_checked</span>
+<span class="material-symbols-outlined absolute bottom-1/4 right-1/4 text-primary-container text-[8px] animate-pulse opacity-50">change_history</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Status Bar -->
+<footer class="fixed bottom-0 left-0 w-full h-12 z-50 bg-[#050B18]/80 backdrop-blur-2xl border-t border-white/5 flex justify-between items-center px-12">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">terminal</span>
+<span class="font-mono text-[9px] uppercase tracking-widest text-primary/60">System Log: Synthesis Complete // Gateway Ready</span>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary-container animate-pulse">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-mono text-[9px] uppercase tracking-widest">Signal: 94.2%</span>
+</div>
+<div class="h-4 w-px bg-white/10"></div>
+<span class="font-mono text-[9px] text-slate-500 tracking-widest uppercase">V.2.0.4-BETA</span>
+</div>
+</footer>
+</body></html>

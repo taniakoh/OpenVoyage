@@ -11,10 +11,9 @@
     "test:tinyfish": "node --env-file=.env scripts/test-tinyfish.mjs"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "14.2.33",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.100.1",
-    "framer-motion": "^12.9.2",
+    "framer-motion": "11.18.2",
     "next": "14.2.33",
     "openai": "^6.33.0",
     "react": "^18.3.1",
@@ -23,7 +22,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
-    "@next/swc-wasm-nodejs": "14.2.33",
     "@types/node": "^22.13.10",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",

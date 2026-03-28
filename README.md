@@ -66,6 +66,8 @@ Environment variables currently used by the app:
 - `OPENAI_INTENT_MODEL` - Optional override for the intent parsing model, defaults to `gpt-4o-mini`
 - `TINYFISH_API_KEY` - Optional; if missing, `/api/tinyfish/run` falls back to mock streaming data
 - `TINYFISH_BASE_URL` - Optional TinyFish base URL, defaults to `https://agent.tinyfish.ai`
+- `TINYFISH_CONNECT_TIMEOUT_MS` - Optional timeout for waiting on TinyFish to accept the request and start streaming, defaults to `90000`
+- `TINYFISH_MAX_RETRIES` - Optional retry count for retryable TinyFish transport failures, defaults to `1`
 - `NEXT_PUBLIC_SUPABASE_URL` - Required for the Supabase client used by the app
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` - Required for the Supabase client used by the app
 - `SUPABASE_URL` - Optional fallback for server-side Supabase configuration
@@ -105,6 +107,7 @@ npm run test:tinyfish
 ```
 
 That script sends an automation request to TinyFish against the Hacker News Jobs page and prints the final `resultJson` once the SSE stream completes.
+If your network is slow to complete the TinyFish TLS handshake or receive the first SSE event, raise `TINYFISH_CONNECT_TIMEOUT_MS` in `.env`.
 
 ## Notes on the Current State
 

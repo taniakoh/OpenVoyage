@@ -6,69 +6,182 @@ export const navItems = [
   { href: "/booking-hud", label: "Booking HUD" }
 ] as const;
 
-export const gatewayPrompts = [
-  {
-    title: "Quiet ferries from Singapore",
-    body: "Find the least chaotic Batam route this weekend, verify with local chatter, and keep it under SGD 120."
-  },
-  {
-    title: "Rail-first highland escape",
-    body: "Optimize for scenic transfers, low crowd density, and weather stability across the next 72 hours."
-  },
-  {
-    title: "Fastest checkpoint strategy",
-    body: "Scan live bottlenecks, summarize sentiment, and suggest the best departure window for a same-day return."
-  }
-];
+export const defaultGatewayPrompt =
+  "Find me the quietest Batam ferry from Singapore tomorrow morning, keep it affordable, and verify checkpoint conditions with Reddit and local news.";
 
-export const resultCards = [
+export const supportedSources = [
+  "Reddit",
+  "Local news",
+  "Batam Fast",
+  "Majestic Fast Ferry",
+  "KTM",
+  "Budget airlines"
+] as const;
+
+export const signalHighlights = [
   {
-    name: "Batam Quiet Window",
-    intelligenceScore: "98.4%",
-    detail: "Cross-checking ferry operators, live weather, and 5 community reports shows the 06:40 departure is the calmest route."
+    eyebrow: "Scout Coverage",
+    title: "3 live sources checked",
+    description: "Batam Fast, Majestic Fast Ferry, and Reddit were all scanned before the route was ranked."
   },
   {
-    name: "Woodlands Rail Corridor",
-    intelligenceScore: "91.1%",
-    detail: "TinyFish scouts found lower queue density after 13:20 with stronger punctuality than the morning peak."
+    eyebrow: "Best Route",
+    title: "05:40 Batam Centre ferry",
+    description: "Earliest calm departure with confirmed seats and lower checkpoint congestion."
   },
   {
-    name: "Contingency Lane",
-    intelligenceScore: "86.7%",
-    detail: "Best fallback if social sentiment worsens or a carrier changes boarding cadence."
+    eyebrow: "Ground Truth",
+    title: "CLEAR social signal",
+    description: "Recent traveler chatter shows normal queues and no disruption spikes in the last 24 hours."
   }
-];
+] as const;
 
 export const missionEvents = [
   {
-    title: "Intent Parsed",
-    time: "08:00",
-    description: "Structured travel entities extracted and broadcast to the scout mesh.",
+    title: "Booking confirmed",
+    time: "08:00 AM",
+    description: "Ferry reservation was completed and the confirmation reference was saved to the itinerary.",
     status: "complete"
   },
   {
-    title: "TinyFish Scouts Active",
-    time: "08:05",
-    description: "Browser sessions are traversing ferry, rail, Reddit, and checkpoint sources in parallel.",
+    title: "Checkpoint monitoring active",
+    time: "08:32 AM",
+    description: "OpenVoyage is watching Reddit, local alerts, and operator updates for queue changes before departure.",
     status: "active"
   },
   {
-    title: "Execution Window Ready",
-    time: "08:14",
-    description: "The booking sequence is staged and waiting for final human confirmation.",
+    title: "Departure reminder",
+    time: "09:45 AM",
+    description: "Traveler gets a final reminder with terminal, check-in window, and fallback guidance if delays appear.",
     status: "upcoming"
   }
 ] as const;
 
 export const discoveryBullets = [
-  "The quietest corridor consistently appears when social chatter spikes but operator inventory remains steady.",
-  "Reddit posts emphasize queue avoidance more than ticket price, so the scoring model weights sentiment and friction together.",
-  "A manual confirmation checkpoint is preserved before any payment action, matching the human-in-the-loop requirement."
-];
+  "Intent parsing preserves destination, preferred modes, and scout queries so the brief stays traceable to the original request.",
+  "Ground-truth scoring weights social chatter and booking friction together, not just price, before the route is promoted.",
+  "The execution handoff remains human-in-the-loop with an MFA bridge and explicit confirm-payment stop."
+] as const;
 
-export const bookingFields = [
-  { label: "Destination Coordinate", value: "Batam Centre Terminal" },
-  { label: "Vessel Grade", value: "Quiet Cabin" },
-  { label: "Temporal Sync", value: "2026-03-29 06:40 SGT" },
-  { label: "Passenger Profile", value: "Primary traveler profile" }
+export const discoveryRoutes = [
+  {
+    id: "dawn-ferry",
+    title: "Dawn Ferry Transfer",
+    departure: "05:40 SGT",
+    duration: "58 min",
+    fare: "$38",
+    confidence: "94.2%",
+    note:
+      "Picked because the early departure clears checkpoint compression before commuter traffic spikes and social chatter stays consistently calm.",
+    verified: true,
+    sources: ["Reddit", "Checkpoint Watch", "TinyFish"]
+  },
+  {
+    id: "harbor-rail",
+    title: "Harbor Rail Connection",
+    departure: "06:10 SGT",
+    duration: "1h 14m",
+    fare: "$31",
+    confidence: "89.6%",
+    note:
+      "Slightly slower, but the transfer chain remains resilient when ferry queues slip and the station sentiment remains neutral.",
+    verified: false,
+    sources: ["TinyFish", "Transit Feed"]
+  },
+  {
+    id: "soft-landing",
+    title: "Soft Landing Backup",
+    departure: "07:05 SGT",
+    duration: "1h 21m",
+    fare: "$29",
+    confidence: "82.4%",
+    note:
+      "Held as a contingency route because it trades speed for reliability and leaves more recovery room if verification starts appearing.",
+    verified: false,
+    sources: ["TinyFish", "Fare Scout"]
+  }
+] as const;
+
+export const sentryVerification = {
+  label: "Live Sentry",
+  status: "CLEAR",
+  summary:
+    "Social scout confirms calm queues, no active delay clusters, and a stable checkpoint window over the last 90 minutes.",
+  checks: [
+    "Checkpoint mentions trending down 18%",
+    "No disruption keywords in the latest scout pass",
+    "Primary route matches booking-site availability"
+  ]
+} as const;
+
+export const vibeMap = {
+  image: "/stitch/openvoyage-basin.jpg",
+  alt: "Mountain basin overview used as the destination vibe map",
+  tags: [
+    { label: "Quiet coves", tone: "positive", top: "16%", left: "12%" },
+    { label: "Misty sunrise", tone: "positive", top: "30%", left: "62%" },
+    { label: "Low foot traffic", tone: "positive", top: "58%", left: "22%" },
+    { label: "Check-in smooth", tone: "neutral", top: "70%", left: "66%" }
+  ]
+} as const;
+
+export const discoverySignals = [
+  {
+    label: "Scout consensus",
+    value: "3 of 3 aligned"
+  },
+  {
+    label: "Sentiment drift",
+    value: "-12% congestion"
+  },
+  {
+    label: "Booking friction",
+    value: "Low"
+  }
+] as const;
+
+export const evidenceSummary = {
+  sourceCount: "5 Reddit threads, 2 local reports, 2 operator checks",
+  verdict: "CLEAR",
+  citedSignals: [
+    "Reddit queue complaints have dropped over the last 90 minutes.",
+    "Operator timetable still shows the 05:40 Batam Centre departure as available.",
+    "No weather or port disruption alerts were detected for the selected window."
+  ]
+} as const;
+
+export const agencyComparison = [
+  { label: "OpenVoyage", fare: "$38", duration: "58 min", note: "Early ferry, lower queue risk" },
+  { label: "Typical aggregator", fare: "$44", duration: "1h 15m", note: "Later departure, no live queue check" }
+] as const;
+
+export const bookingSession = {
+  site: "batamfast.com",
+  route: "Singapore HarbourFront -> Batam Centre",
+  departure: "29 Mar 2026, 05:40 SGT",
+  passenger: "Primary traveler profile loaded"
+} as const;
+
+export const bookingSteps = [
+  { label: "Details", state: "complete" },
+  { label: "Seats", state: "complete" },
+  { label: "Payment", state: "active" }
+] as const;
+
+export const liveSiteFields = [
+  { label: "Current page", value: "Passenger details review" },
+  { label: "Operator", value: "Batam Fast Ferry" },
+  { label: "Status", value: "Waiting for SMS code" }
+] as const;
+
+export const missionAlert = {
+  title: "Proactive Alert",
+  summary: "Checkpoint chatter is still calm, but rain risk has increased slightly near departure. A re-scan is available if conditions change.",
+  action: "Review backup options"
+} as const;
+
+export const missionStats = [
+  { label: "Route status", value: "On time" },
+  { label: "Queue signal", value: "Low" },
+  { label: "Backup route", value: "Prepared" }
 ] as const;

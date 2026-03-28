@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OpenVoyage | Signal Stream</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#00e5ff",
+              "on-surface-variant": "#bac9cc",
+              "outline": "#849396",
+              "primary": "#c3f5ff",
+              "on-primary": "#00363d",
+              "on-surface": "#dce2f5",
+              "background": "#0d1321",
+              "surface-container-low": "#151c29",
+              "tertiary-container": "#fec931",
+              "surface-variant": "#2e3543",
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {
+              "DEFAULT": "1rem",
+              "lg": "2rem",
+              "xl": "3rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0d1321; }
+      .newsreader { font-family: 'Newsreader', serif; }
+      .glass-card { 
+        background: rgba(13, 19, 33, 0.4); 
+        backdrop-filter: blur(40px); 
+        border: 1px solid rgba(0, 229, 255, 0.2); 
+        border-radius: 32px;
+      }
+      .glow-border { 
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.05); 
+      }
+      .shimmer { 
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0) 100%); 
+        background-size: 200% 100%; 
+      }
+      .thinking-trace-node { animation: pulse-node 4s infinite ease-in-out; }
+      @keyframes pulse-node { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.15); } }
+      .live-sentry-aura { animation: sentry-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
+      @keyframes sentry-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 8px #00E5FF; } 50% { opacity: 0.6; box-shadow: 0 0 16px #00E5FF; } }
+    </style>
+</head>
+<body class="text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen overflow-x-hidden">
+<!-- Full-Bleed Background Landscape -->
+<div class="fixed inset-0 -z-10 bg-background overflow-hidden">
+<img alt="Cinematic landscape" class="w-full h-full object-cover opacity-50 mix-blend-screen scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4k-TNZ_qu_5rJWcMxXJ32VdwhlGmJQRnejmNddTabGJloTsXtCVUhbHHWo9yXJ6QKDsXG3hfu277b1A63PSvYdvF99JrAZogdoUF-_2YyU7KgsETLgjKLYsfUVdp5x_-7Z-xc_NNZBqBM8V9iyqWggojjb9HlRzd_VaMckKbeZJ87TsE06Hymji973tvm57kFoHbRu1D9Y68YILh2GPmBmJoxTh1tcLjPsaVe9Nf5khjSNgaZEUG4q0vhv6opZkFJGAFIe2dymyM"/>
+<div class="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background"></div>
+</div>
+<!-- Thinking Trace Nodes (Floating Layer) -->
+<div class="fixed top-40 right-24 pointer-events-none flex flex-col gap-16 -z-5">
+<div class="thinking-trace-node flex items-center gap-4">
+<div class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-[10px] text-cyan-400 font-mono">R/</div>
+<div class="h-[1px] w-32 bg-gradient-to-r from-cyan-500/30 to-transparent"></div>
+</div>
+<div class="thinking-trace-node flex items-center gap-4 translate-x-16 delay-1000">
+<div class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-[10px] text-cyan-400 font-mono">X</div>
+<div class="h-[1px] w-20 bg-gradient-to-r from-cyan-500/30 to-transparent"></div>
+</div>
+<div class="thinking-trace-node flex items-center gap-4 -translate-x-12 delay-700">
+<div class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-[10px] text-cyan-400 font-mono">K</div>
+<div class="h-[1px] w-40 bg-gradient-to-r from-cyan-500/30 to-transparent"></div>
+</div>
+</div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-2xl flex justify-between items-center px-12 py-8">
+<div class="text-3xl newsreader italic font-light text-[#F8FAFC]">OpenVoyage</div>
+<nav class="hidden md:flex gap-12">
+<a class="text-primary-container font-headline tracking-wide border-b border-primary-container/40 pb-1" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors font-headline tracking-wide" href="#">History</a>
+<a class="text-slate-400 hover:text-white transition-colors font-headline tracking-wide" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-8">
+<div class="relative group hidden sm:block">
+<input class="bg-surface-container-low/30 border-none rounded-full px-8 py-3 text-sm focus:ring-1 focus:ring-primary-container/40 w-72 placeholder:text-slate-600 backdrop-blur-md" placeholder="Scan coordinates..." type="text"/>
+</div>
+<button class="text-primary-container hover:scale-110 transition-transform p-1">
+<span class="material-symbols-outlined text-3xl" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="relative pt-44 pb-32 px-6 md:px-12 lg:px-24">
+<!-- Page Header -->
+<div class="mb-20 max-w-3xl">
+<h1 class="text-6xl md:text-8xl newsreader font-light text-[#F8FAFC] leading-[1.1] mb-6">
+            The <span class="italic opacity-80">Signal Stream</span>
+</h1>
+<p class="text-on-surface-variant text-xl leading-relaxed font-light tracking-wide max-w-2xl">
+            Intelligence synthesis complete. Traversing 4.2M nodes of travel data to curate your path through the celestial horizon.
+        </p>
+</div>
+<!-- Results Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+<!-- Main Feature Card -->
+<div class="md:col-span-8 group">
+<div class="glass-card glow-border p-12 h-full flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 p-10">
+<div class="flex items-center gap-3 bg-primary-container/5 border border-primary-container/20 px-5 py-2 rounded-full backdrop-blur-md">
+<div class="w-2.5 h-2.5 rounded-full bg-primary-container live-sentry-aura"></div>
+<span class="text-[10px] uppercase tracking-[0.2em] text-primary-container font-bold">Live Sentry Verified</span>
+</div>
+</div>
+<div>
+<span class="text-primary-container/60 text-xs font-mono tracking-[0.3em] uppercase mb-6 block">Destination Alpha</span>
+<h2 class="text-5xl newsreader font-light text-[#F8FAFC] mb-10 leading-tight">The Ethereal Peaks of Lumina</h2>
+<div class="flex flex-wrap gap-6 mb-12">
+<div class="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
+<span class="text-[10px] text-on-surface-variant block uppercase tracking-widest mb-1">Conditions</span>
+<span class="text-primary text-lg font-light tracking-wide">Perfect Visibility</span>
+</div>
+<div class="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
+<span class="text-[10px] text-on-surface-variant block uppercase tracking-widest mb-1">Intelligence Score</span>
+<span class="text-primary text-lg font-light tracking-wide">98.4% Match</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+<p class="text-on-surface-variant max-w-lg font-light leading-relaxed text-lg">
+                        Derived from 1,200 real-time logs. Terrain stability confirmed via KTM telemetry. High celestial activity predicted for the next 72 hours.
+                    </p>
+<button class="bg-primary-container text-on-primary font-bold px-10 py-5 rounded-2xl shadow-2xl shadow-primary-container/30 transition-all hover:scale-105 hover:brightness-110 active:scale-95 whitespace-nowrap">
+                        Initiate Warp
+                    </button>
+</div>
+</div>
+</div>
+<!-- The Nexus Card -->
+<div class="md:col-span-4 h-full">
+<div class="glass-card glow-border h-full flex flex-col overflow-hidden">
+<div class="h-64 overflow-hidden relative">
+<img alt="Nexus Hub" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSd45Kt2ggz2vfibE5ft4qTilpXCGgR-Ttte-HlriuNKa_oQ7Mp6rZIEgAoYFLPGI6IMInw5ACt7B18iBAM-59v9E0MODQAur-GxiSgxRoNUqMod5D6Jjx84RrAwyttkeY_tpSKN-65QqheCSihyXlcxw0LwjkcsjJaMtI8rqeOwawBu6J2mhoeqgHDlNBIps0KHy9dOhfoeuuuKjBjPaakgRXsV5f1K6S_OmMCStIZvmjVnMIprk0TlZVtSg10FOeGIkbTsSniCc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
+</div>
+<div class="p-10 flex-grow flex flex-col">
+<h3 class="text-3xl newsreader font-light text-[#F8FAFC] mb-4">The Nexus Hub</h3>
+<p class="text-on-surface-variant font-light leading-relaxed mb-8">
+                        Central synthesis point for multi-modal travel. Ideal for transition states.
+                    </p>
+<div class="flex items-center justify-between mt-auto pt-4">
+<span class="text-primary-container/80 font-mono text-xs tracking-widest">COORD: 42.1N / 12.4E</span>
+<span class="material-symbols-outlined text-primary-container" data-icon="north_east">north_east</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Synthesizing Skeleton -->
+<div class="md:col-span-4 h-[400px]">
+<div class="glass-card p-10 relative overflow-hidden h-full flex flex-col justify-center shimmer">
+<div class="w-1/3 h-5 bg-primary-container/10 rounded-full mb-6"></div>
+<div class="w-3/4 h-10 bg-white/5 rounded-full mb-3"></div>
+<div class="w-1/2 h-10 bg-white/5 rounded-full mb-10"></div>
+<div class="space-y-4">
+<div class="w-full h-3 bg-white/5 rounded-full"></div>
+<div class="w-full h-3 bg-white/5 rounded-full"></div>
+<div class="w-2/3 h-3 bg-white/5 rounded-full"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-[11px] font-mono tracking-[0.4em] uppercase text-primary-container/40 rotate-12">Synthesizing Signal...</span>
+</div>
+</div>
+</div>
+<!-- The Quiet Path Insight -->
+<div class="md:col-span-4 h-[400px]">
+<div class="glass-card glow-border p-10 h-full flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<div class="w-16 h-16 rounded-full bg-tertiary-container/10 flex items-center justify-center border border-tertiary-container/20">
+<span class="material-symbols-outlined text-tertiary-container text-3xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<span class="text-tertiary-container/80 text-[10px] font-mono tracking-[0.3em] mt-2">HINT DETECTED</span>
+</div>
+<h3 class="text-3xl newsreader font-light text-[#F8FAFC] mb-6">The Quiet Path</h3>
+<p class="text-on-surface-variant text-lg font-light leading-relaxed">
+                    Signal analysis of local forums suggests a 40% reduction in congestion if traversing through the Lunar Pass at 04:00.
+                </p>
+</div>
+</div>
+<!-- Solaris Outpost Vertical -->
+<div class="md:col-span-4 h-[400px]">
+<div class="glass-card glow-border overflow-hidden h-full group relative">
+<img alt="Solaris Outpost" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp3xFDNCDgeSgE_bBzcoDvuzQhuTuefYKQX9oeABaRYN8XnjRTrrab2MheCYUmGdVPxpXfalfBPAfbFeYvmjduM3Rv4UkTyELIl9UUJjf44DIs51WhCnl-jT66uVKEPXxjpH1B-vuoEE65uVFcbROq9aD2hKslvFJjAKKqqhVV3vRycNdIAcIkJMmwdulgCLb01WRw-JI4USLLndpzdd5S0pOOSwDzC1b78X2FXgilar-QLzuPtTJLNFU84iAA1CKWkF8moaiSr8I"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent p-10 flex flex-col justify-end">
+<h3 class="text-3xl newsreader text-[#F8FAFC] mb-3">Solaris Outpost</h3>
+<p class="text-xs text-primary-container/80 font-mono tracking-[0.2em] uppercase">Minimalist Shelter • Signal Strong</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar HUD Style -->
+<footer class="fixed bottom-0 left-0 w-full h-16 z-50 flex justify-around items-center px-12 bg-slate-950/80 backdrop-blur-2xl border-t border-white/5">
+<div class="flex items-center gap-3 text-slate-500 hover:text-white transition-all font-mono text-[10px] uppercase tracking-[0.2em] cursor-pointer group">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+<span class="hidden sm:inline">Agent Log</span>
+</div>
+<div class="flex items-center gap-3 text-primary-container font-mono text-[10px] uppercase tracking-[0.2em]">
+<span class="material-symbols-outlined text-lg live-sentry-aura rounded-full p-1" data-icon="sensors">sensors</span>
+<span>Status: Active Signal</span>
+</div>
+<div class="flex items-center gap-3 text-slate-500 hover:text-white transition-all font-mono text-[10px] uppercase tracking-[0.2em] cursor-pointer group">
+<span class="material-symbols-outlined text-lg" data-icon="grain">grain</span>
+<span class="hidden sm:inline">Signal Stream</span>
+</div>
+</footer>
+</body></html>

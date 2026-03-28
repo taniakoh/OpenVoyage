@@ -4,11 +4,11 @@ Goal: Convert a "Vibe" prompt into a machine-readable JSON plan.
 
 [ ] Setup: Initialize Next.js 14+ (App Router), Tailwind, and Shadcn/UI.
 
-[ ] API Route /api/search: Create a GPT-4o/Claude 3.5 structured output route.
+[x] API Route /api/search: Create a GPT-4o/Claude 3.5 structured output route.
 
-[ ] The Intent Parser: Feed the prompt (e.g., "I want a quiet beach trip to Batam via ferry") to the LLM.
+[x] The Intent Parser: Feed the prompt (e.g., "I want a quiet beach trip to Batam via ferry") to the LLM.
 
-[ ] Output Schema: Ensure it returns destination, preferred_modes, and scout_queries.
+[x] Output Schema: Ensure it returns destination, preferred_modes, and scout_queries.
 
 Phase 2: The Hands (TinyFish Scout Integration)
 Goal: Deploy remote browsers to scrape "API-blind" transport sites.
@@ -41,13 +41,13 @@ Goal: Implement the "Awe and Serenity" landing page.
 Phase 4: The Discovery Bento (UI Layer 2)
 Goal: Display agent findings with "Ground Truth" validation.
 
-[ ] Bento Grid: Build the 32px corner radius glass cards.
+[x] Bento Grid: Build the 32px corner radius glass cards.
 
-[ ] Live Sentry Badge: Add the Neon Mint pulsing aura for routes verified by the Social Scout.
+[x] Live Sentry Badge: Add the Neon Mint pulsing aura for routes verified by the Social Scout.
 
-[ ] Vibe Map: Integrate destination images with floating sentiment tags extracted from Reddit.
+[x] Vibe Map: Integrate destination images with floating sentiment tags extracted from Reddit.
 
-[ ] Logic Hover: Add a small "Agent's Note" tooltip explaining why this route was picked.
+[x] Logic Hover: Add a small "Agent's Note" tooltip explaining why this route was picked.
 
 Phase 5: The Execution HUD & MFA Bridge
 Goal: The "Heads-Up Display" for autonomous booking.
@@ -63,8 +63,8 @@ Goal: The "Heads-Up Display" for autonomous booking.
 Phase 6: Post-Booking "Live Sentry"
 Goal: 24/7 monitoring and "Self-Healing."
 
-[ ] Itinerary Timeline: A vertical Teal Glow thread.
+[x] Itinerary Timeline: A vertical Teal Glow thread.
 
-[ ] Alert Logic: A background cron (or interval) that re-scrapes social sentiment every 30 mins.
+[x] Alert Logic: A background cron (or interval) that re-scrapes social sentiment every 30 mins.
 
-[ ] Emergency Signal: Slide-in card for detected delays.
+[x] Emergency Signal: Slide-in card for detected delays.

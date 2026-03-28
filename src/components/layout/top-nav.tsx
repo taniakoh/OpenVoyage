@@ -3,10 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { navItems } from "@/lib/open-voyage-data";
+const routes = [
+  { href: "/", label: "Gateway" },
+  { href: "/signal-stream", label: "Signal Stream" },
+  { href: "/mission-control", label: "Mission Control" },
+  { href: "/discovery-report", label: "Discovery Report" },
+  { href: "/booking-hud", label: "Booking HUD" }
+] as const;
+
+function isActiveRoute(pathname: string, href: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function TopNav() {
   const pathname = usePathname();
+  const activeRoute = routes.find((route) => isActiveRoute(pathname, route.href));
 
   return (
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/45 backdrop-blur-3xl">
@@ -15,8 +30,8 @@ export function TopNav() {
           OpenVoyage
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => {
-            const active = pathname === item.href;
+          {routes.map((item) => {
+            const active = isActiveRoute(pathname, item.href);
             return (
               <Link
                 key={item.href}
@@ -31,7 +46,7 @@ export function TopNav() {
           })}
         </nav>
         <div className="glass-chip rounded-full px-4 py-2 font-mono text-[10px] uppercase tracking-[0.25em] text-cyan-300">
-          Initial Setup
+          {activeRoute?.label ?? "OpenVoyage"}
         </div>
       </div>
     </header>

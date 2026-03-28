@@ -1,6 +1,7 @@
+import { Readable } from "node:stream";
 import { z } from "zod";
 
-import { getTinyFishConfig, tinyFishEnabled } from "@/lib/tinyfish";
+import { postTinyFishRunSse, tinyFishEnabled } from "@/lib/tinyfish";
 
 const bodySchema = z.object({
   url: z.string().url(),
@@ -49,22 +50,30 @@ export async function POST(request: Request) {
     });
   }
 
-  const config = getTinyFishConfig();
-  const response = await fetch(`${config.baseUrl}/v1/automation/run-sse`, {
-    method: "POST",
-    headers: {
-      "X-API-Key": config.apiKey,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
+  try {
+    const response = await postTinyFishRunSse(body);
+    const contentType = Array.isArray(response.headers["content-type"])
+      ? response.headers["content-type"][0]
+      : response.headers["content-type"];
 
-  return new Response(response.body, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive"
-    },
-    status: response.status
-  });
+    return new Response(Readable.toWeb(response.body) as ReadableStream<Uint8Array>, {
+      headers: {
+        "Content-Type": contentType || "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive"
+      },
+      status: response.status,
+      statusText: response.statusText
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to reach TinyFish from the server route."
+      },
+      { status: 502 }
+    );
+  }
 }
