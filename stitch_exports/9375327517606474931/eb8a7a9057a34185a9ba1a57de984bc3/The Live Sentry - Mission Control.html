@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OpenVoyage | Celestial Mission Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed": "#ffdad2",
+                        "on-secondary": "#621000",
+                        "inverse-on-surface": "#2a303f",
+                        "on-primary-fixed": "#001f24",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#151c29",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "background": "#0d1321",
+                        "tertiary-container": "#fec931",
+                        "tertiary": "#ffeac0",
+                        "surface-container-lowest": "#070e1b",
+                        "surface-container": "#19202d",
+                        "inverse-surface": "#dce2f5",
+                        "surface-tint": "#00daf3",
+                        "on-primary": "#00363d",
+                        "on-primary-container": "#00626e",
+                        "primary-container": "#00e5ff",
+                        "primary-fixed-dim": "#00daf3",
+                        "outline-variant": "#3b494c",
+                        "on-surface-variant": "#bac9cc",
+                        "on-primary-fixed-variant": "#004f58",
+                        "surface-container-highest": "#2e3543",
+                        "secondary-fixed-dim": "#ffb4a3",
+                        "on-surface": "#dce2f5",
+                        "on-error": "#690005",
+                        "primary": "#c3f5ff",
+                        "outline": "#849396",
+                        "on-tertiary-fixed": "#251a00",
+                        "tertiary-fixed-dim": "#f3bf26",
+                        "on-secondary-fixed": "#3d0700",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#0d1321",
+                        "surface-variant": "#2e3543",
+                        "surface-bright": "#333948",
+                        "error-container": "#93000a",
+                        "on-secondary-container": "#ffa089",
+                        "on-background": "#dce2f5",
+                        "secondary": "#ffb4a3",
+                        "surface-container-high": "#232a38",
+                        "primary-fixed": "#9cf0ff",
+                        "on-tertiary-container": "#6f5500",
+                        "inverse-primary": "#006875",
+                        "surface": "#0d1321",
+                        "secondary-container": "#88270f",
+                        "tertiary-fixed": "#ffdf96",
+                        "on-tertiary": "#3e2e00",
+                        "on-secondary-fixed-variant": "#84240d"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(40px);
+            background: linear-gradient(135deg, rgba(21, 28, 41, 0.7) 0%, rgba(13, 19, 33, 0.4) 100%);
+        }
+        .glow-edge {
+            box-shadow: inset 0 0 0 1px rgba(195, 245, 255, 0.15);
+        }
+        .teal-glow-text {
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/40 backdrop-blur-3xl border-b border-cyan-500/10 shadow-2xl shadow-cyan-900/20 transition-all duration-500 ease-in-out">
+<div class="flex justify-between items-center px-12 py-6">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-bold tracking-tighter text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.4)] font-headline">OpenVoyage</span>
+</div>
+<nav class="hidden md:flex items-center gap-12 font-serif font-light tracking-wide Newsreader text-lg">
+<a class="text-slate-400 hover:text-cyan-200 transition-colors" href="#">Explore</a>
+<a class="text-cyan-300 border-b-2 border-cyan-400 pb-1" href="#">History</a>
+<a class="text-slate-400 hover:text-cyan-200 transition-colors" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-surface-container-lowest border-none rounded-full px-6 py-2 text-sm focus:ring-1 focus:ring-primary-container text-on-surface-variant w-64" placeholder="Search coordinates..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary">search</span>
+</div>
+<button class="material-symbols-outlined text-cyan-400 text-3xl hover:bg-cyan-500/5 p-2 rounded-full transition-all">account_circle</button>
+</div>
+</div>
+</header>
+<main class="min-h-screen pt-32 pb-40 px-6 md:px-12 lg:px-24">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column: Mission Status & Alerts -->
+<div class="lg:col-span-4 flex flex-col gap-10">
+<div class="space-y-4">
+<h1 class="font-headline text-5xl text-on-surface font-light tracking-tight leading-none">Mission <br/><span class="text-primary-container italic">Control</span></h1>
+<p class="text-on-surface-variant text-lg max-w-xs">Real-time surveillance of your celestial transit to the Neo-Tokyo Spire.</p>
+</div>
+<!-- Emergency Signal (Proactive Alert) -->
+<div class="glass-panel glow-edge rounded-xl p-8 border-l-4 border-secondary animate-pulse">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary text-3xl">emergency_home</span>
+<div>
+<h3 class="text-secondary font-headline text-xl font-semibold">Emergency Signal</h3>
+<p class="text-on-surface-variant text-sm mt-1">Solar flare activity detected in sector 7-G. High-speed rail transit delayed by 14 minutes.</p>
+<button class="mt-4 text-xs uppercase tracking-widest font-bold text-secondary-fixed hover:underline">Acknowledge &amp; Re-route</button>
+</div>
+</div>
+</div>
+<!-- Technical Node Card -->
+<div class="glass-panel glow-edge rounded-xl p-8 space-y-6">
+<div class="flex justify-between items-center">
+<span class="text-xs font-mono text-primary-container tracking-widest uppercase">System Integrity</span>
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Sync Strength</span>
+<span class="text-primary">98.4%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[98.4%]"></div>
+</div>
+</div>
+<button class="w-full py-4 rounded-lg bg-surface-container-highest text-primary-container font-headline text-lg hover:bg-primary-container/10 transition-colors flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">refresh</span>
+                        Re-scan Environment
+                    </button>
+</div>
+</div>
+<!-- Right Column: Dynamic Timeline & Visualization -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Hero Visual -->
+<div class="relative h-[300px] rounded-xl overflow-hidden glass-panel glow-edge">
+<img alt="Deep space vista with cyan nebula and digital grid overlays" class="w-full h-full object-cover opacity-50 mix-blend-lighten" data-alt="Cinematic wide shot of a deep blue space nebula with glowing cyan digital data streams and a futuristic ship silhouette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZTO0W6KXmlDl6Rh0Fkj6IPVf2vGgb6pNoFTuDZZ4j0HaPdGmvpUj8mKl0wM6jVXZtuLM0v5eowqUP17xh1vXV4fRNSzuHC1s8VxMmwXJICRecnAicYw83LeY_DmGXT2lx_2lOObiHccORAduTsppoDwuqoFgGBUWJ3oy71jgDLk7ANB7hy7vXDez9r0Oj_vrcuZJzp3C7nC0Z3h4J6hVkhOxOErwIQu8NQGfxy8cYWJjiO5jUjyzI_FkY7wzGDdheCh_7chnm9zE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-3 py-1 bg-primary-container/20 text-primary-container text-[10px] font-mono rounded-full uppercase tracking-tighter">In Transit</span>
+<span class="text-on-surface-variant text-xs font-mono">ID: ATH-9021-X</span>
+</div>
+<h2 class="text-3xl font-headline font-light text-on-surface">Neo-Tokyo Skybridge</h2>
+</div>
+</div>
+<!-- Dynamic Timeline -->
+<div class="relative pl-12 space-y-16">
+<!-- The Thread -->
+<div class="absolute left-[19px] top-4 bottom-4 w-[2px] bg-surface-container-highest"></div>
+<div class="absolute left-[19px] top-4 h-[60%] w-[2px] bg-primary-container shadow-[0_0_15px_rgba(0,229,255,0.6)]"></div>
+<!-- Segment 1: Completed -->
+<div class="relative">
+<div class="absolute -left-12 mt-1 w-10 h-10 rounded-full bg-primary-container flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-on-primary-container text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="glass-panel glow-edge p-6 rounded-lg ml-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-headline text-on-surface">Departure Gate Alpha</h4>
+<span class="text-xs font-mono text-on-surface-variant">08:00 AM</span>
+</div>
+<p class="text-on-surface-variant text-sm">Security clearance finalized. Biometric handshake complete. Boarding pod engaged.</p>
+</div>
+</div>
+<!-- Segment 2: Active -->
+<div class="relative">
+<div class="absolute -left-12 mt-1 w-10 h-10 rounded-full bg-background border-4 border-primary-container flex items-center justify-center z-10 shadow-[0_0_20px_rgba(0,229,255,0.4)]">
+<div class="w-2 h-2 rounded-full bg-primary-container animate-ping"></div>
+</div>
+<div class="glass-panel glow-edge p-8 rounded-lg ml-4 border-l-2 border-primary-container">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-2xl font-headline text-primary-container teal-glow-text">Atmospheric Transit</h4>
+<p class="text-on-surface-variant text-sm">Velocity: Mach 4.2 | Altitude: 85,000ft</p>
+</div>
+<span class="text-xs font-mono text-primary-container">CURRENTLY HERE</span>
+</div>
+<div class="grid grid-cols-3 gap-4 mt-6">
+<div class="bg-surface-container-lowest p-3 rounded-lg text-center">
+<p class="text-[10px] uppercase text-on-surface-variant mb-1">Gravity</p>
+<p class="text-lg font-mono text-on-surface">0.85G</p>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-lg text-center">
+<p class="text-[10px] uppercase text-on-surface-variant mb-1">Oxygen</p>
+<p class="text-lg font-mono text-on-surface">21%</p>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-lg text-center">
+<p class="text-[10px] uppercase text-on-surface-variant mb-1">Eta</p>
+<p class="text-lg font-mono text-on-surface">12m</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Segment 3: Upcoming -->
+<div class="relative opacity-40">
+<div class="absolute -left-12 mt-1 w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-outline text-xl">location_on</span>
+</div>
+<div class="glass-panel glow-edge p-6 rounded-lg ml-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-headline text-on-surface">Destination Arrival</h4>
+<span class="text-xs font-mono text-on-surface-variant">09:45 AM</span>
+</div>
+<p class="text-on-surface-variant text-sm">Automated docking at Neo-Tokyo Hub 4. AI Concierge transfer initiated.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Agent Log) -->
+<footer class="fixed bottom-0 left-0 w-full h-20 z-50 bg-slate-950/80 backdrop-blur-xl border-t border-cyan-500/20 shadow-[0_-20px_80px_rgba(0,229,255,0.1)] flex justify-around items-center px-10">
+<div class="flex flex-col items-center text-slate-600 hover:text-cyan-200 transition-all">
+<span class="material-symbols-outlined text-2xl">terminal</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Agent Log</span>
+</div>
+<div class="flex flex-col items-center text-cyan-400 animate-pulse">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Status: Active</span>
+</div>
+<div class="flex flex-col items-center text-slate-600 hover:text-cyan-200 transition-all">
+<span class="material-symbols-outlined text-2xl">grain</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Signal Stream</span>
+</div>
+</footer>
+</body></html>

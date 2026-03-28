@@ -1,0 +1,104 @@
+# tinyfi.sh
+
+> Share local apps instantly via SSH tunnel. No install, no account, free forever.
+
+## What is tinyfi.sh?
+
+tinyfi.sh is a free SSH tunneling service that creates instant public HTTPS URLs for locally running web apps. One command, instant sharing.
+
+## Usage
+
+```bash
+ssh -R 80:localhost:<your-port> tinyfi.sh
+```
+
+Replace `<your-port>` with your app's port (3000, 5173, 8000, etc.)
+
+Result: `https://random-name.tinyfi.sh`
+
+## Common Ports
+
+- Next.js/React/Express: 3000
+- Vite: 5173
+- Django: 8000
+- Flask: 5000
+- Go: 8080
+
+## Custom Subdomain
+
+```bash
+ssh -R myname:80:localhost:3000 tinyfi.sh
+```
+
+Result: `https://myname.tinyfi.sh`
+
+## Keep Alive
+
+```bash
+ssh -o ServerAliveInterval=60 -R 80:localhost:3000 tinyfi.sh
+```
+
+## Rate Limits
+
+- 5 SSH connections/min per IP
+- 100 HTTP requests/min per IP
+- 50 concurrent connections
+- 48 hour idle timeout
+
+## Use Cases
+
+- Share prototypes instantly
+- Demo to clients without deploying
+- Test webhooks locally
+- Mobile testing on real devices
+- Team previews
+
+## Claude Code Skill
+
+Download the skill for automatic tunnel setup:
+
+```bash
+mkdir -p ~/.claude/skills/tinyfish && curl -o ~/.claude/skills/tinyfish/SKILL.md https://tinyfi.sh/skill.md
+```
+
+Then say: "share my app"
+
+## Cursor Rules
+
+```bash
+mkdir -p .cursor/rules && curl -o .cursor/rules/tinyfish.mdc https://tinyfi.sh/cursor.md
+```
+
+## GitHub Copilot Instructions
+
+```bash
+mkdir -p .github && curl https://tinyfi.sh/copilot.md >> .github/copilot-instructions.md
+```
+
+## Windsurf Rules
+
+```bash
+curl https://tinyfi.sh/windsurf.md >> .windsurfrules
+```
+
+## Cline Rules
+
+```bash
+curl https://tinyfi.sh/cline.md >> .clinerules
+```
+
+## Clawdbot (OpenClaw) Skills
+
+```bash
+mkdir -p ~/.openclaw/workspace/skills/tinyfish && curl -o ~/.openclaw/workspace/skills/tinyfish/SKILL.md https://tinyfi.sh/skill.md
+```
+
+## Links
+
+- Website: https://tinyfi.sh
+- Skill: https://tinyfi.sh/skill.md
+- Terms: https://tinyfi.sh/terms.md
+
+## Contact
+
+info@tinyfish.ai

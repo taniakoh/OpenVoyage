@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:wght@200..800&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#ffdad2",
+              "on-secondary": "#621000",
+              "inverse-on-surface": "#2a303f",
+              "on-primary-fixed": "#001f24",
+              "on-error-container": "#ffdad6",
+              "surface-container-low": "#151c29",
+              "on-tertiary-fixed-variant": "#594400",
+              "background": "#0d1321",
+              "tertiary-container": "#fec931",
+              "tertiary": "#ffeac0",
+              "surface-container-lowest": "#070e1b",
+              "surface-container": "#19202d",
+              "inverse-surface": "#dce2f5",
+              "surface-tint": "#00daf3",
+              "on-primary": "#00363d",
+              "on-primary-container": "#00626e",
+              "primary-container": "#00e5ff",
+              "primary-fixed-dim": "#00daf3",
+              "outline-variant": "#3b494c",
+              "on-surface-variant": "#bac9cc",
+              "on-primary-fixed-variant": "#004f58",
+              "surface-container-highest": "#2e3543",
+              "secondary-fixed-dim": "#ffb4a3",
+              "on-surface": "#dce2f5",
+              "on-error": "#690005",
+              "primary": "#c3f5ff",
+              "outline": "#849396",
+              "on-tertiary-fixed": "#251a00",
+              "tertiary-fixed-dim": "#f3bf26",
+              "on-secondary-fixed": "#3d0700",
+              "error": "#ffb4ab",
+              "surface-dim": "#0d1321",
+              "surface-variant": "#2e3543",
+              "surface-bright": "#333948",
+              "error-container": "#93000a",
+              "on-secondary-container": "#ffa089",
+              "on-background": "#dce2f5",
+              "secondary": "#ffb4a3",
+              "surface-container-high": "#232a38",
+              "primary-fixed": "#9cf0ff",
+              "on-tertiary-container": "#6f5500",
+              "inverse-primary": "#006875",
+              "surface": "#0d1321",
+              "secondary-container": "#88270f",
+              "tertiary-fixed": "#ffdf96",
+              "on-tertiary": "#3e2e00",
+              "on-secondary-fixed-variant": "#84240d"
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"],
+              "mono": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { background-color: #0d1321; }
+      .glass-edge { border: 1px solid rgba(195, 245, 255, 0.15); }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="font-body text-on-surface selection:bg-primary-container/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/40 backdrop-blur-3xl border-b border-cyan-500/10 shadow-2xl shadow-cyan-900/20 transition-all duration-500 ease-in-out flex justify-between items-center px-12 py-6">
+<div class="text-2xl font-bold tracking-tighter text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.4)] font-serif">
+            OpenVoyage
+        </div>
+<nav class="hidden md:flex items-center gap-10 font-serif font-light tracking-wide">
+<a class="text-cyan-300 border-b-2 border-cyan-400 pb-1" href="#">Explore</a>
+<a class="text-slate-400 hover:text-cyan-200 transition-colors" href="#">History</a>
+<a class="text-slate-400 hover:text-cyan-200 transition-colors" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-cyan-400 text-2xl cursor-pointer hover:bg-cyan-500/5 p-2 rounded-full transition-all">account_circle</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="min-h-screen pt-32 pb-24 px-12 max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<!-- Left Column: Summary -->
+<section class="lg:col-span-5 flex flex-col gap-12">
+<div class="space-y-6">
+<span class="font-mono text-primary-container tracking-[0.3em] text-xs uppercase opacity-80">Ground Truth Protocol // 082</span>
+<h1 class="font-headline text-6xl xl:text-7xl text-on-surface leading-[1.1] font-light">
+                    The Silent Peak <br/><span class="italic text-primary">Synthesis</span>
+</h1>
+</div>
+<div class="space-y-8">
+<p class="font-headline text-2xl text-on-surface-variant leading-relaxed font-light">
+                    Our cross-network analysis confirms a rare atmospheric alignment over the <span class="text-primary italic">OpenVoyage Highlands</span>. While global travel signals suggest peak congestion, the specific local telemetry reveals a "Quiet Pocket" within the northern ridge.
+                </p>
+<div class="p-8 rounded-xl bg-surface-container-low backdrop-blur-3xl glass-edge relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container/10 rounded-full blur-2xl group-hover:bg-primary-container/20 transition-all duration-700"></div>
+<p class="text-on-surface-variant leading-loose relative z-10">
+                        The consensus among seasoned explorers indicates that the trail is currently being avoided due to a localized magnetic anomaly that confuses standard GPS, making it a <span class="text-on-surface font-medium underline decoration-primary/30">Hidden Gem</span> for those utilizing our proprietary inertial guidance.
+                    </p>
+</div>
+</div>
+<!-- Discovery Signal Meter -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<span class="font-mono text-[10px] uppercase tracking-widest text-primary">Discovery Signal Strength</span>
+<span class="font-mono text-xs text-primary-container">Optimum: 94.2%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container shadow-[0_0_15px_rgba(0,229,255,0.6)] w-[94%] animate-pulse"></div>
+</div>
+<div class="flex gap-6 mt-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">forum</span>
+<span class="font-mono text-[10px] text-on-surface-variant">5 Reddit Threads</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">article</span>
+<span class="font-mono text-[10px] text-on-surface-variant">2 News Reports</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">satellite_alt</span>
+<span class="font-mono text-[10px] text-on-surface-variant">Live Feed Sync</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Vibe Map Widget -->
+<section class="lg:col-span-7 sticky top-32">
+<div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-2xl shadow-black/60 group">
+<!-- Background Image -->
+<img alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" data-alt="cinematic wide-angle shot of a mist-shrouded turquoise alpine lake at dawn with jagged slate-colored peaks and ethereal teal lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZPYukA_8xIndBaxucr7QwEQT55BlLVA-2Di9ye5sNj_U5r3pyIVNnXqoYLQ3mFFtcAjroKysdmybVShZdhGWDWo6jKTKxAd_SzOhdoxNQkF7xT9hPAwAZbBDEuFtTq3-ix_EpwAdvKK1JKrwxB9sG-Td4406jit5HQUkApA1ZcM-ecFd823GNBHSEuR65an17SmtsU4PN1nQlQRtbcbLjk1LX9uhXcHPF12KiYCuZhT0grccqepAGJWvAikuxYy4wdELih1WikB0"/>
+<!-- Overlay Vignette -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
+<!-- Floating Glass Tags -->
+<div class="absolute inset-0 p-12 flex flex-col justify-between pointer-events-none">
+<div class="flex justify-between items-start">
+<div class="p-4 rounded-lg bg-surface-container-lowest/40 backdrop-blur-xl glass-edge flex flex-col gap-1 pointer-events-auto hover:bg-surface-container-lowest/60 transition-all cursor-default">
+<span class="font-mono text-[10px] text-primary uppercase">Coordinates</span>
+<span class="font-mono text-sm">46.8523° N, 9.6122° E</span>
+</div>
+<div class="flex flex-col gap-3 items-end">
+<div class="px-6 py-2 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 text-white font-headline italic tracking-wide text-sm pointer-events-auto">
+                                Quiet
+                            </div>
+<div class="px-6 py-2 rounded-full bg-cyan-500/20 backdrop-blur-2xl border border-cyan-400/30 text-cyan-400 font-headline italic tracking-wide text-sm pointer-events-auto">
+                                Hidden Gem
+                            </div>
+</div>
+</div>
+<!-- Map Legend / UI HUD -->
+<div class="space-y-6 pointer-events-auto">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.4)]">
+<span class="material-symbols-outlined text-on-primary">explore</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-3xl text-white">The OpenVoyage Basin</span>
+<span class="font-mono text-xs text-primary-container">Live Telemetry Active</span>
+</div>
+</div>
+<!-- Radar Sweep Mockup -->
+<div class="relative h-32 w-full glass-edge rounded-lg bg-slate-950/40 backdrop-blur-md overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="absolute top-1/2 left-0 w-full h-px bg-primary/20"></div>
+<div class="absolute top-0 left-1/2 h-full w-px bg-primary/20"></div>
+<!-- Scanning Line -->
+<div class="absolute top-0 left-1/2 h-full w-1/2 bg-gradient-to-r from-primary/10 to-transparent origin-left animate-[spin_4s_linear_infinite]"></div>
+<!-- Static Icons -->
+<span class="material-symbols-outlined absolute top-1/4 left-1/3 text-primary text-xs animate-pulse" style="font-variation-settings: 'FILL' 1;">circle</span>
+<span class="material-symbols-outlined absolute bottom-1/3 right-1/4 text-primary-container text-[8px] animate-pulse">change_history</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Status Bar -->
+<footer class="fixed bottom-0 left-0 w-full h-20 z-50 bg-slate-950/80 backdrop-blur-xl border-t border-cyan-500/20 shadow-[0_-20px_80px_rgba(0,229,255,0.1)] flex justify-around items-center px-10">
+<div class="flex flex-col items-center text-slate-600 hover:text-cyan-200 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-hover:text-cyan-400 transition-colors">terminal</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Agent Log</span>
+</div>
+<div class="flex flex-col items-center text-cyan-400 animate-pulse cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Status: Active</span>
+</div>
+<div class="flex flex-col items-center text-slate-600 hover:text-cyan-200 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-hover:text-cyan-400 transition-colors">grain</span>
+<span class="font-mono text-[10px] uppercase tracking-widest mt-1">Signal Stream</span>
+</div>
+</footer>
+</body></html>

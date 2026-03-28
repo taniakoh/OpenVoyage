@@ -1,0 +1,33 @@
+
+> open-voyage@0.1.0 predev
+> node scripts/prepare-next-dev.mjs
+
+
+> open-voyage@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 7.9s
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 5.6s (126 modules)
+ ○ Compiling / ...
+ ✓ Compiled /_not-found in 32.6s (594 modules)
+ GET / 404 in 82476ms
+ ✓ Compiled in 2.2s (594 modules)
+ ○ Compiling /signal-stream ...
+ ✓ Compiled /signal-stream in 2.2s (519 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled / in 9.2s (746 modules)
+ ✓ Compiled (809 modules)
+ GET /_next/static/webpack/8c27a847a56ee2b1.webpack.hot-update.json 404 in 11594ms
+ GET /signal-stream 500 in 86ms
+ GET / 500 in 161ms
+ GET /signal-stream 500 in 127ms
+ GET / 500 in 135ms
+ GET /signal-stream 500 in 182ms
+ GET / 500 in 171ms
+ GET /signal-stream 500 in 153ms
